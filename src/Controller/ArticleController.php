@@ -57,6 +57,7 @@ class ArticleController extends AbstractController
         if($page > $pages) {
             return $this->response(['message' => 'Page Not Found'], 404);
         }
+        $result['data'] = [];
         foreach($paginator as $row) {
             $result['data'][] = $row;
         }
