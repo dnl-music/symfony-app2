@@ -1,0 +1,49 @@
+version: '3.1'
+
+services:
+  php:
+    #build: .
+    image: php:7-fpm
+    volumes:
+      - ./:/app
+    tty: true
+    #links:
+    #   - composer
+    working_dir: /app
+
+    command: >
+      sh -c "apt update &&
+          apt install -y git unzip libmcrypt-dev libmagickwand-dev --no-install-recommends libpq-dev &&
+      docker-php-ext-install pdo pdo_pgsql iconv &&
+      curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+      composer install &&
+      chmod 777 var/log && chmod 777 var/cache &&
+      php-fpm"
+    #tail -f /dev/null"
+
+    environment:
+      DATABASE_URL: "postgresql://postgres:123@postgres:5432/postgres?serverVersion=13&charset=utf8"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+      - ./site.conf:/etc/nginx/conf.d/site.conf
+    links:
+      - php
+    depends_on:
+      - php
+
+  postgres:
+    restart: always
+    image: postgres
+    ports:
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: '123'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+
+    volumes:
+    - ./data/postgresql:/var/lib/postgresql/data/pgdata

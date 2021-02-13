@@ -26,7 +26,7 @@ class ArticleController extends AbstractController
      * @Route("/articles", name="articles", methods={"GET"})
      */
     public function getArticle(Request $request, ArticleRepository $articleRepository){
-        $criteria = [];
+
         $year = $request->query->get('year');
         $month = $request->query->get('month');
         $tags = $request->query->get('tags');
