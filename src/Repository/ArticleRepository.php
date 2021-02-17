@@ -16,24 +16,24 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ArticleRepository extends ServiceEntityRepository
 {
-    public $queryBuilder = null;
+    private $queryBuilder;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Article::class);
+        $this->queryBuilder = $this->createQueryBuilder('a');
     }
 
     public function getQueryBuilder() : QueryBuilder
     {
-        return $this->queryBuilder ?? $this->createQueryBuilder('a')
-            ->leftJoin('a.tags', 't')
-            ->orderBy('a.create_date', 'DESC');
+        return $this->queryBuilder;
     }
 
-    public function findDefault(): ArticleRepository
+    public function findDefault()
     {
-        $this->queryBuilder = $this->getQueryBuilder();
-        return $this;
+        $this->queryBuilder
+            ->leftJoin('a.tags', 't')
+            ->orderBy('a.create_date', 'DESC');
     }
 
     public function findByMonthYear($month, $year)
