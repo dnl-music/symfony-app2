@@ -36,26 +36,22 @@ class ArticleRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function findByMonthYear($month, $year) : ArticleRepository
+    public function findByMonthYear($month, $year)
     {
         $fromTime = new \DateTime($year . '-' . $month . '-01');
         $toTime = new \DateTime($fromTime->format('Y-m-d') . ' first day of next month');
-        $this->queryBuilder = $this->getQueryBuilder();
-        $this->queryBuilder = $this->queryBuilder
+        $this->queryBuilder
                     ->andWhere('a.create_date >= :fromTime')
                     ->andWhere('a.create_date < :toTime')
                     ->setParameter('fromTime', $fromTime)
                     ->setParameter('toTime', $toTime);
-        return $this;
     }
 
-    public function findByTags(Array $tags) :ArticleRepository
+    public function findByTags(Array $tags)
     {
-        $this->queryBuilder = $this->getQueryBuilder();
-        $this->queryBuilder = $this->queryBuilder
+        $this->queryBuilder
                     ->andWhere('t.name IN (:tags)')
                     ->setParameter('tags', $tags);
-        return $this;
     }
 
     // /**

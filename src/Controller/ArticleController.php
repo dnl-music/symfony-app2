@@ -31,6 +31,9 @@ class ArticleController extends AbstractController
         $month = $request->query->get('month');
         $tags = $request->query->get('tags');
         $page = $request->query->get('page') ?? 1;
+        if($tags and !is_array($tags)) {
+            return $this->response(['message' => 'Parameter tags must be an array'], 400);
+        }
         if($page < 1) {
             return $this->response(['message' => 'page must be greater than 0'], 400);
         }
